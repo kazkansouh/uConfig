@@ -1,0 +1,29 @@
+<!--
+  ~ Copyright (c) 2018 Karim Kanso. All Rights Reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="app_name">uConfig</string>
+    <string name="title_activity_discovery">uConfig Discovery</string>
+    <string name="button_set_variable">Save</string>
+    <string name="button_invoke_action">Invoke</string>
+    <string name="menu_variables">Variables</string>
+    <string name="menu_actions">Actions</string>
+    <string name="snack_invoke_fail">Validation failed</string>
+    <string name="snack_invoke_ok">Invoked</string>
+    <string name="snack_write_fail">Validation failed</string>
+    <string name="snack_write_ok">Variable sent</string>
+</resources>
