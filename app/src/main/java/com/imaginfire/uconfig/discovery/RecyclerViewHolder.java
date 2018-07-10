@@ -26,7 +26,7 @@ import com.imaginfire.uconfig.R;
 
 public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     // each data item is just a string in this case
-    private ConstraintLayout view;
+    private final ConstraintLayout view;
     RecyclerViewHolder(ConstraintLayout v) {
         super(v);
         view = v;

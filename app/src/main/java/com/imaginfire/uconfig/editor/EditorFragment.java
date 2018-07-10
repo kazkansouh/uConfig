@@ -23,6 +23,8 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -59,7 +61,11 @@ public class EditorFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // get reference to view model
-        DeviceViewModel model = ViewModelProviders.of(getActivity()).get(DeviceViewModel.class);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            throw new RuntimeException("Fragment must be connected to activity.");
+        }
+        DeviceViewModel model = ViewModelProviders.of(activity).get(DeviceViewModel.class);
         if (getArguments() != null) {
             String api = getArguments().getString(ARG_API_LOCATION,"");
             if (model.getDeviceList().getValue() != null) {
@@ -72,8 +78,13 @@ public class EditorFragment extends Fragment {
             }
             if (device == null) {
                 Log.e(TAG, "Device not found: " + api);
-                getFragmentManager().popBackStack();
-                return;
+                FragmentManager fragmentManager = getFragmentManager();
+                if (fragmentManager != null) {
+                    fragmentManager.popBackStack();
+                    return;
+                } else {
+                    throw new RuntimeException("Fragment must be attached to activity.");
+                }
             }
         } else {
             throw new RuntimeException("Missing parameter from fragment initialisation.");
@@ -110,8 +121,13 @@ public class EditorFragment extends Fragment {
         device.getTTL().observe(this, i -> {
             if (i == null || i == 0) {
                 // device has disappeared from network, close fragment
-                getFragmentManager().popBackStack();
-                return;
+                FragmentManager fragmentManager = getFragmentManager();
+                if (fragmentManager != null) {
+                    getFragmentManager().popBackStack();
+                    return;
+                } else {
+                    throw new RuntimeException("Fragment must be attached to activity.");
+                }
             }
             ttl.setProgress(i);
         });

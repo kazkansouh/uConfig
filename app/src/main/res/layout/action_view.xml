@@ -41,7 +41,7 @@
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Action Name (Param1, Param2, Param3)"
+            android:text="@string/designer_action_name"
             android:textAppearance="@android:style/TextAppearance.Material.Large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_invoke_action"

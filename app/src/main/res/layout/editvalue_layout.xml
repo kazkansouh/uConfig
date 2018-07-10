@@ -19,28 +19,23 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/edit_value_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/text_param_name"
-        android:layout_width="0dp"
+    <com.imaginfire.uconfig.editor.controls.EditValue
+        android:id="@+id/editvalue"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:ems="10"
+        android:inputType="number"
         android:maxLines="1"
-        android:text="@string/designer_parameter_name"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:singleLine="true"
+        android:text="@string/designer_editvalue_default"
+        android:textColor="?android:attr/titleTextColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <include
-        layout="@layout/editvalue_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text_param_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
 
 </android.support.constraint.ConstraintLayout>

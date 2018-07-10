@@ -91,8 +91,9 @@ public class ActionViewHolder extends RecyclerView.ViewHolder {
             if (v instanceof ConstraintLayout) {
                 TextView t = v.findViewById(R.id.text_param_name);
                 t.setText(e.getKey());
-                EditValue f = v.findViewById(R.id.edit_parameter);
+                EditValue f = v.findViewById(R.id.editvalue);
                 f.setType(e.getValue());
+                f.setText("");
             } else {
                 throw new RuntimeException("ConstraintLayout child of param_pane not found");
             }
@@ -123,7 +124,7 @@ public class ActionViewHolder extends RecyclerView.ViewHolder {
             View v = param_pane.getChildAt(i);
             if (v instanceof ConstraintLayout) {
                 TextView t = v.findViewById(R.id.text_param_name);
-                EditValue e = v.findViewById(R.id.edit_parameter);
+                EditValue e = v.findViewById(R.id.editvalue);
                 params.put(t.getText().toString(), e.getValue());
             } else {
                 throw new RuntimeException("ConstraintLayout child of param_pane not found");

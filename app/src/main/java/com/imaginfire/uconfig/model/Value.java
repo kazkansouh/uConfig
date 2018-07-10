@@ -145,7 +145,7 @@ public class Value {
         return false;
     }
 
-    public static Value parse(Type type, @NonNull String s) throws NumberFormatException {
+    public static Value parse(Type type, @NonNull String s) throws IllegalArgumentException {
         switch (type) {
             case Byte:
                 int i = Integer.decode(s);
@@ -156,6 +156,9 @@ public class Value {
             case Int:
                 return new Value(null, Integer.decode(s), null);
             case String:
+                if (s.equals("")) {
+                    throw new IllegalArgumentException("Empty string is not valid.");
+                }
                 return new Value(null, null, s);
         }
         return null;

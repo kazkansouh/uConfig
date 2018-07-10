@@ -63,6 +63,10 @@ public class Action {
         http_params.put("method", name);
         for (Map.Entry<String, Value> e : parameters.entrySet()) {
             if (params.containsKey(e.getKey())) {
+                if (e.getValue() == null) {
+                    Log.w(TAG, "Null value provided for parameter " + e.getKey() + ", ignoring.");
+                    return false;
+                }
                 if (params.get(e.getKey()) != e.getValue().type) {
                     Log.w(TAG, "Inconsistent types of parameter " + e.getKey() + ", ignoring.");
                     return false;

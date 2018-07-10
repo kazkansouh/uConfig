@@ -31,7 +31,7 @@ public class Device {
     private final MutableLiveData<Integer> ttl = new MutableLiveData<>();
     private final String name;
     private final String api;
-    private ArrayList<OnVariableBroadcastListener> listeners = new ArrayList<>();
+    private final ArrayList<OnVariableBroadcastListener> listeners = new ArrayList<>();
 
     Device(InetAddress a, String api, String n) {
         address = a;

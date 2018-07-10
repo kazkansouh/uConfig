@@ -36,9 +36,9 @@ import com.imaginfire.uconfig.editor.controls.EditValue;
 import com.imaginfire.uconfig.model.Value;
 
 public class VariableViewHolder extends RecyclerView.ViewHolder implements LifecycleOwner {
-    private static int S_LOADING = 0x01;
-    private static int S_EXPANDED = 0x02;
-    private static int S_EDITABLE = 0x04;
+    private static final int S_LOADING = 0x01;
+    private static final int S_EXPANDED = 0x02;
+    private static final int S_EDITABLE = 0x04;
 
     // a sub lifecycle to ensure livedata observers are removed
     private LifecycleRegistry lifecycle;
@@ -106,7 +106,7 @@ public class VariableViewHolder extends RecyclerView.ViewHolder implements Lifec
             throw new RuntimeException("button_set_variable Button not found");
         }
 
-        u = v.findViewById(R.id.edit_variable);
+        u = v.findViewById(R.id.editvalue);
         if (u != null && u instanceof EditValue) {
             edit_value = (EditValue) u;
         } else {
@@ -169,6 +169,7 @@ public class VariableViewHolder extends RecyclerView.ViewHolder implements Lifec
     void clearState() {
         state = 0;
         displayState();
+        edit_value.setType(Value.Type.String);
     }
 
     private void displayState() {
