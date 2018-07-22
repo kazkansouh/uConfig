@@ -29,13 +29,4 @@
     <string name="error_permissions">Location permission not granted, unable to scan wifi for uConfig hotspot.</string>
     <string name="switch_wifi">Auto WiFi</string>
     <string name="button_grant">Grant</string>
-
-    <!-- following are for use in designer and defined here to suppress warnings -->
-    <string name="designer_device_name">Device Name</string>
-    <string name="designer_device_api">http://Device.API/schema</string>
-    <string name="designer_variable_name">Variable Name</string>
-    <string name="designer_variable_value">Variable Value</string>
-    <string name="designer_editvalue_default">0</string>
-    <string name="designer_action_name">Action Name (Param1, Param2, Param3)</string>
-    <string name="designer_parameter_name">Param Name</string>
 </resources>

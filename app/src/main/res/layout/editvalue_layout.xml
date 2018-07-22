@@ -19,6 +19,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/edit_value_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -32,7 +33,7 @@
         android:inputType="number"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="@string/designer_editvalue_default"
+        tools:text="0"
         android:textColor="?android:attr/titleTextColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

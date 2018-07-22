@@ -18,6 +18,7 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content">
 
@@ -28,7 +29,7 @@
 		android:layout_marginEnd="@dimen/boarder"
 		android:layout_marginStart="@dimen/boarder"
 		android:layout_marginTop="4dp"
-		android:text="@string/designer_device_name"
+		tools:text="Device Name"
 		android:textAppearance="@android:style/TextAppearance.Material.Large"
 		app:layout_constraintEnd_toStartOf="@+id/progress_timeout"
 		app:layout_constraintHorizontal_bias="0.0"
@@ -42,7 +43,7 @@
 		android:layout_marginBottom="4dp"
 		android:layout_marginEnd="@dimen/boarder"
 		android:layout_marginStart="@dimen/boarder"
-		android:text="@string/designer_device_api"
+		tools:text="http://Device.API/schema"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/progress_timeout"
 		app:layout_constraintStart_toStartOf="parent"

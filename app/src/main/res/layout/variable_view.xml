@@ -19,6 +19,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -53,7 +54,7 @@
             android:layout_marginTop="@dimen/boarder"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@string/designer_variable_name"
+            tools:text="Variable Name"
             android:textAppearance="@android:style/TextAppearance.Material.Large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/divider_variable_name_value"
@@ -78,7 +79,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@string/designer_variable_value"
+            tools:text="Variable Value"
             android:textAlignment="textEnd"
             android:textAppearance="@android:style/TextAppearance.Material.Medium"
             app:layout_constraintBottom_toBottomOf="parent"
