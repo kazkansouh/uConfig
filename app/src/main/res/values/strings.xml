@@ -26,7 +26,9 @@
     <string name="snack_invoke_ok">Invoked</string>
     <string name="snack_write_fail">Validation failed</string>
     <string name="snack_write_ok">Variable sent</string>
-
+    <string name="error_permissions">Location permission not granted, unable to scan wifi for uConfig hotspot.</string>
+    <string name="switch_wifi">Auto WiFi</string>
+    <string name="button_grant">Grant</string>
 
     <!-- following are for use in designer and defined here to suppress warnings -->
     <string name="designer_device_name">Device Name</string>

@@ -1,14 +1,20 @@
 # uConfig Android Client
 
-Light-weight and usable data editor and action invoker. Micro Config client is designed to provide a
-simple JSON based interface for:
+Light-weight and usable data editor and action invoker. uConfig (*micro*Config or *mu*Config) client
+is designed to provide a simple JSON based interface for:
 
 * Discovering uConfig servers over UDP port 8003.
 * Reading and writing variables on uConfig servers.
 * Invoking actions on uConfig servers.
 
-It is considered light-weight to reduce the burden on the uConfig server, and usable because it uses
- JSON HTTP requests over a binary protocol.
+Support is provided for scanning for uConfig [hotspot](#hotspot) and attempt to connect to them. This
+is primarily used for initial configuration of the uConfig server before it has been connected to
+the local WiFi network.
+
+It is considered light-weight as one aim is to reduce the burden on the uConfig server (which can be
+an embedded device), and usable because it uses JSON REST HTTP requests instead of binary protocols.
+The idea of the project was inspired by DLMS (e.g. read/write data and invoke actions over
+a generic interface), however it has diverged substantially to be more human usable.
 
 Currently the only server that supports this is implemented for an ESP8266,
 see [here](https://github.com/kazkansouh/lerd86/tree/master/display/).
@@ -208,3 +214,17 @@ http://192.168.3.67/uconf/invoke?method=newuser&user=joe%40bloggs&pin=443
 
 This invokes the action, and sets the user parameter to "joe@bloggs" (notice that the string has
 been URL encoded) with the pin "443".
+
+## Hotspot
+
+A uConfig hotspot is used to simplify initial configuration of non-connected devices. They use
+WPA and the SSID follows the naming convention of: `uConfig` concatenated with a space
+and four characters. For example, `uConfig 45ft`.
+
+WPA is used to prevent devices accidentally connecting connecting to the hotspot. To calculate the
+WPA passphrase, the last four characters of the SSID are concatenated with the last two bytes of
+the BSSID (in lowercase). That is, the BSSID `xx:xx:xx:xx:58:EA` when combined with the above SSID
+would yield the passphrase of `45ft58ea`.
+
+The level of security this provides is minimal, instead is allows for multiple devices to be
+powered on at the same time all requiring configuration without conflicts.
