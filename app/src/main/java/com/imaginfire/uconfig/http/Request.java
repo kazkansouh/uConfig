@@ -27,6 +27,7 @@ import org.json.JSONTokener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -91,8 +92,8 @@ public class Request extends AsyncTask<RequestArguments, Void, JSONObject> {
             Log.e(TAG, "Schema url invalid", e);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "UTF is not supported.", e);
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to communicate with server to read schema", e);
+        } catch (IOException | UncheckedIOException e) {
+            Log.e(TAG, "Failed to communicate with server", e);
         } catch (JSONException e) {
             Log.e(TAG, "Could not parse returned data as json.", e);
         }
