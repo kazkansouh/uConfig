@@ -60,11 +60,7 @@ public class EditValue extends AppCompatEditText {
                         setCompoundDrawablesWithIntrinsicBounds(null, null, ok, null);
                         return;
                     }
-                } catch (NumberFormatException e) {
-                    Log.d(TAG, "Invalid number entered", e);
-                    setCompoundDrawablesWithIntrinsicBounds(null, null, error, null);
                 } catch (IllegalArgumentException e) {
-                    Log.d(TAG, "Invalid string entered, possibly empty", e);
                     setCompoundDrawablesWithIntrinsicBounds(null, null, error, null);
                 }
                 Log.w(TAG,"Unable to convert string into: " + type);
