@@ -17,14 +17,15 @@
 
 package com.imaginfire.uconfig.editor;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.imaginfire.uconfig.R;
@@ -34,7 +35,10 @@ import com.imaginfire.uconfig.model.Value;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActionViewHolder extends RecyclerView.ViewHolder {
+public class ActionViewHolder extends BaseViewHolder {
+    private static final int S_LOADING = 0x01;
+    private static final int S_EXPANDED = 0x02;
+
     @NonNull
     private final ConstraintLayout container;
     @NonNull
@@ -43,12 +47,15 @@ public class ActionViewHolder extends RecyclerView.ViewHolder {
     private final LinearLayout param_pane;
     @NonNull
     private final Button invoke;
+    @NonNull
+    private final ProgressBar loading;
 
     private final int backgroundcolor;
     private final int selectedbackgroundcolor;
+    private int state = 0;
 
-    ActionViewHolder(@NonNull ConstraintLayout c) {
-        super(c);
+    ActionViewHolder(LifecycleOwner owner, @NonNull ConstraintLayout c) {
+        super(owner, c);
 
         container = c;
         View u = c.findViewById(R.id.text_action_name);
@@ -68,6 +75,13 @@ public class ActionViewHolder extends RecyclerView.ViewHolder {
         u = c.findViewById(R.id.button_invoke_action);
         if (u != null && u instanceof Button) {
             invoke = (Button)u;
+        } else {
+            throw new RuntimeException("button_invoke_action Button not found");
+        }
+
+        u = c.findViewById(R.id.progress_loading);
+        if (u != null && u instanceof ProgressBar) {
+            loading = (ProgressBar)u;
         } else {
             throw new RuntimeException("button_invoke_action Button not found");
         }
@@ -101,14 +115,43 @@ public class ActionViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    void setLoading(boolean loading) {
+        if (loading) {
+            state = state | S_LOADING;
+        } else {
+            state = state & ~S_LOADING;
+        }
+        displayState();
+    }
+
     void setExpanded(boolean expanded) {
         if (expanded) {
+            state = state | S_EXPANDED;
+        } else {
+            state = state & ~S_EXPANDED;
+        }
+        displayState();
+    }
+
+    private void displayState() {
+        if ((state & S_EXPANDED) > 0) {
             param_pane.setVisibility(View.VISIBLE);
-            invoke.setVisibility(View.VISIBLE);
+            if ((state & S_LOADING) > 0) {
+                loading.setVisibility(View.VISIBLE);
+                invoke.setVisibility(View.INVISIBLE);
+            } else {
+                loading.setVisibility(View.INVISIBLE);
+                invoke.setVisibility(View.VISIBLE);
+            }
             container.setBackgroundColor(selectedbackgroundcolor);
         } else {
             param_pane.setVisibility(View.GONE);
             invoke.setVisibility(View.INVISIBLE);
+            if ((state & S_LOADING) > 0) {
+                loading.setVisibility(View.VISIBLE);
+            } else {
+                loading.setVisibility(View.INVISIBLE);
+            }
             container.setBackgroundColor(backgroundcolor);
         }
     }

@@ -81,11 +81,11 @@ public class Variable {
         return type;
     }
 
-    public void startRead() {
-        startRead(false);
+    public void startRead(OnAction fail) {
+        startRead(false, fail);
     }
 
-    private void startRead(boolean ignorebusy) {
+    private void startRead(boolean ignorebusy, OnAction fail) {
         if (!isReadable()) {
             value.postValue(null);
         }
@@ -99,6 +99,9 @@ public class Variable {
                             v -> {
                                 if (v == null) {
                                     busy.postValue(false);
+                                    if (fail != null) {
+                                        fail.onAction();
+                                    }
                                     return;
                                 }
                                 try {
@@ -122,6 +125,9 @@ public class Variable {
                                 } catch (JSONException e) {
                                     Log.e(TAG, "Unable to read variable value from json response.", e);
                                     value.postValue(null);
+                                    if (fail != null) {
+                                        fail.onAction();
+                                    }
                                 }
                                 busy.postValue(false);
                             }));
@@ -130,7 +136,7 @@ public class Variable {
         }
     }
 
-    public boolean startWrite(Value v) {
+    public boolean startWrite(Value v, OnAction ok, OnAction fail) {
         if (!isWritable()) {
             Log.w(TAG, "Attempt to write not writable variable ignored.");
             return false;
@@ -151,6 +157,9 @@ public class Variable {
                         if (obj == null) {
                             Log.d(TAG, "failed to write value");
                             busy.postValue(false);
+                            if (fail != null) {
+                                fail.onAction();
+                            }
                             return;
                         }
                         String result;
@@ -158,16 +167,27 @@ public class Variable {
                             result = obj.getString("result");
                         } catch (JSONException e) {
                             Log.e(TAG, "Unable to read variable value from json response.");
+                            if (fail != null) {
+                                fail.onAction();
+                            }
                             return;
                         } finally {
                             busy.postValue(false);
                         }
                         if (result.equals("ok")) {
+                            if (ok != null) {
+                                ok.onAction();
+                            }
                             if (isReadable()) {
-                                startRead(true);
+                                // necessary to set ignorebusy as the posted value of WriteOk will
+                                // be processed by main thread so might not be visible in startRead.
+                                startRead(true, null);
                             }
                         } else {
                             Log.e(TAG, "Error returned from server while writing variable:" + result);
+                            if (fail != null) {
+                                fail.onAction();
+                            }
                         }
                     }
             ));

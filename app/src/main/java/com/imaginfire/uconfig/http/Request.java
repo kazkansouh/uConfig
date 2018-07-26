@@ -31,6 +31,7 @@ import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -73,7 +74,10 @@ public class Request extends AsyncTask<RequestArguments, Void, JSONObject> {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod("GET");
-                if (connection.getResponseCode() < 300) {
+                // set tight timeouts as this is synchronised
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(2000);
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     //Get Response
                     String response = new BufferedReader(new InputStreamReader(connection.getInputStream()))
                             .lines().collect(Collectors.joining("\n"));
@@ -85,13 +89,15 @@ public class Request extends AsyncTask<RequestArguments, Void, JSONObject> {
                         Log.e(TAG, "Not a JSON object at root");
                     }
                 } else {
-                    Log.e(TAG, "Failed to get valid 200 response from server");
+                    Log.e(TAG, "Failed to get valid 200 response from server: " + connection.getResponseCode());
                 }
             }
         } catch (MalformedURLException e) {
             Log.e(TAG, "Schema url invalid", e);
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "UTF is not supported.", e);
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, "Timeout while communicating with server");
         } catch (IOException | UncheckedIOException e) {
             Log.e(TAG, "Failed to communicate with server", e);
         } catch (JSONException e) {

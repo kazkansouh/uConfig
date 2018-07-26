@@ -17,6 +17,8 @@
 
 package com.imaginfire.uconfig.model;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -34,11 +36,12 @@ public class Action {
     private final HashMap<String, Value.Type> params = new HashMap<>();
     private final String api;
     private String display = "";
-    private boolean busy = false;
+    private final MutableLiveData<Boolean> busy = new MutableLiveData<>();
 
     Action(@NonNull String api, @NonNull String name) {
         this.name = name;
         this.api = api;
+        busy.setValue(false);
         updateDisplayString();
     }
 
@@ -51,7 +54,11 @@ public class Action {
         return params;
     }
 
-    public boolean invoke(Map<String, Value> parameters) {
+    public LiveData<Boolean> getBusy() {
+        return busy;
+    }
+
+    public boolean invoke(Map<String, Value> parameters, OnAction ok, OnAction fail) {
         Log.d(TAG, "Invoking action");
 
         if (parameters.size() != params.size()) {
@@ -78,9 +85,10 @@ public class Action {
             }
         }
 
-        if (busy) {
+        if (busy.getValue() != null && busy.getValue()) {
             return true;
         }
+        busy.postValue(true);
 
         new Request().execute(new RequestArguments(
                 http_params,
@@ -88,7 +96,10 @@ public class Action {
                 obj -> {
                     if (obj == null) {
                         Log.d(TAG, "failed to write value");
-                        busy = false;
+                        busy.postValue(false);
+                        if (fail != null) {
+                            fail.onAction();
+                        }
                         return;
                     }
                     String result;
@@ -96,12 +107,22 @@ public class Action {
                         result = obj.getString("result");
                     } catch (JSONException e) {
                         Log.e(TAG, "Unable to read variable value from json response.");
+                        if (fail != null) {
+                            fail.onAction();
+                        }
                         return;
                     } finally {
-                        busy = false;
+                        busy.postValue(false);
                     }
                     if (!result.equals("ok")) {
+                        if (fail != null) {
+                            fail.onAction();
+                        }
                         Log.e(TAG, "Error returned from server while invoking action:" + result);
+                    } else {
+                        if (ok != null) {
+                            ok.onAction();
+                        }
                     }
                 }
         ));

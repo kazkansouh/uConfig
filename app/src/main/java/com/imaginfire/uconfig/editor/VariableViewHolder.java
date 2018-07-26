@@ -17,14 +17,10 @@
 
 package com.imaginfire.uconfig.editor;
 
-import android.arch.lifecycle.GenericLifecycleObserver;
-import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LifecycleRegistry;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -35,13 +31,10 @@ import com.imaginfire.uconfig.R;
 import com.imaginfire.uconfig.editor.controls.EditValue;
 import com.imaginfire.uconfig.model.Value;
 
-public class VariableViewHolder extends RecyclerView.ViewHolder implements LifecycleOwner {
+public class VariableViewHolder extends BaseViewHolder {
     private static final int S_LOADING = 0x01;
     private static final int S_EXPANDED = 0x02;
     private static final int S_EDITABLE = 0x04;
-
-    // a sub lifecycle to ensure livedata observers are removed
-    private LifecycleRegistry lifecycle;
 
     private final ConstraintLayout container;
     @NonNull
@@ -62,14 +55,8 @@ public class VariableViewHolder extends RecyclerView.ViewHolder implements Lifec
     private int state = 0;
 
     VariableViewHolder(LifecycleOwner owner, ConstraintLayout v) {
-        super(v);
+        super(owner, v);
         container = v;
-        lifecycle = new LifecycleRegistry(this);
-        owner.getLifecycle().addObserver((GenericLifecycleObserver)(source, event) -> {
-            if (lifecycle != null) {
-                lifecycle.handleLifecycleEvent(event);
-            }
-        });
 
         View u = v.findViewById(R.id.text_variable_name);
         if (u != null && u instanceof TextView) {
@@ -125,12 +112,14 @@ public class VariableViewHolder extends RecyclerView.ViewHolder implements Lifec
         var_name.setText(s);
     }
 
-    void setVariableValue(String s) {
-        if (s == null) {
-            s = "N/A";
+    void setValue(Value v) {
+        if (v == null) {
+            var_value.setText("N/A");
+            edit_value.setText("N/A");
+        } else {
+            var_value.setText(v.getStringValue());
+            edit_value.setText(v);
         }
-        var_value.setText(s);
-        edit_value.setText(s);
     }
 
     public Value getValue() {
@@ -204,18 +193,5 @@ public class VariableViewHolder extends RecyclerView.ViewHolder implements Lifec
                 var_value.setVisibility(View.VISIBLE);
             }
         }
-    }
-
-    void resetObservers() {
-        // LiveData observers are detached on an ON_DESTROY event
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
-        lifecycle = new LifecycleRegistry(this);
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
-    }
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return lifecycle;
     }
 }

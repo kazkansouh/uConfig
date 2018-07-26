@@ -22,9 +22,12 @@
     <string name="button_invoke_action">Invoke</string>
     <string name="menu_variables">Variables</string>
     <string name="menu_actions">Actions</string>
-    <string name="snack_invoke_fail">Validation failed</string>
-    <string name="snack_invoke_ok">Invoked</string>
-    <string name="snack_write_fail">Validation failed</string>
+    <string name="snack_invoke_fail">Failed to invoke</string>
+    <string name="snack_invoke_invalid">Validation failed</string>
+    <string name="snack_invoke_ok">Request sent</string>
+    <string name="snack_read_fail">Unable to read variable</string>
+    <string name="snack_write_invalid">Validation failed</string>
+    <string name="snack_write_fail">Unable to write variable</string>
     <string name="snack_write_ok">Variable sent</string>
     <string name="error_permissions">Location permission not granted, unable to scan wifi for uConfig hotspot.</string>
     <string name="switch_wifi">Auto WiFi</string>

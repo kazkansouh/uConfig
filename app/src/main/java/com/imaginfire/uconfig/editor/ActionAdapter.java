@@ -30,18 +30,18 @@ import com.imaginfire.uconfig.R;
 import com.imaginfire.uconfig.model.Action;
 import com.imaginfire.uconfig.model.SchemaViewModel;
 
-class ActionAdapter extends RecyclerView.Adapter<ActionViewHolder> {
+class ActionAdapter extends BaseAdapter<ActionViewHolder> {
     private static final String TAG = "ActionAdaptor";
     private static final String PARAM_EXPANDED = "com.imaginfire.uconfig.editor.ActionAdapter.EXPANDED";
 
     @NonNull
     private final SchemaViewModel model;
-
+    private final LifecycleOwner owner;
     private int expand = -1;
 
     ActionAdapter(@NonNull LifecycleOwner owner, @NonNull SchemaViewModel schema, Bundle savedInstanceState) {
         model = schema;
-
+        this.owner = owner;
         model.getVariables().observe(owner, list -> this.notifyDataSetChanged());
 
         if (savedInstanceState != null) {
@@ -67,7 +67,7 @@ class ActionAdapter extends RecyclerView.Adapter<ActionViewHolder> {
             LayoutInflater.from(param_parent.getContext())
                     .inflate(R.layout.parameter_view, param_parent, true);
         }
-        ActionViewHolder holder = new ActionViewHolder(v);
+        ActionViewHolder holder = new ActionViewHolder(owner, v);
         v.setOnClickListener( view -> {
             if (parent instanceof RecyclerView) {
                 if (model.getActions().getValue() != null) {
@@ -82,16 +82,29 @@ class ActionAdapter extends RecyclerView.Adapter<ActionViewHolder> {
     public void onBindViewHolder(@NonNull ActionViewHolder holder, int position) {
         if (model.getActions().getValue() != null) {
             Action a = model.getActions().getValue().get(position);
+            a.getBusy().observe(holder, holder::setLoading);
             holder.setActionName(a.toString());
             holder.setExpanded(expand == position);
             holder.setParameters(a.getParameterSpecification());
             holder.setOnClickListener(v -> {
-                if (a.invoke(holder.getParameters())) {
+                if (!a.invoke(holder.getParameters(), () -> {
+                    //ok
                     notifyItemChanged(expand);
                     expand = -1;
-                    Snackbar.make(holder.itemView, R.string.snack_invoke_ok, Snackbar.LENGTH_LONG).show();
-                } else {
-                    Snackbar.make(holder.itemView, R.string.snack_invoke_fail, Snackbar.LENGTH_SHORT).show();
+                    synchronized (this) {
+                        if (recyclerView != null) {
+                            Snackbar.make(recyclerView, R.string.snack_invoke_ok, Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                }, () -> {
+                    // fail
+                    synchronized (this) {
+                        if (recyclerView != null) {
+                            Snackbar.make(holder.itemView, R.string.snack_invoke_fail, Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                })) {
+                    Snackbar.make(holder.itemView, R.string.snack_invoke_invalid, Snackbar.LENGTH_SHORT).show();
                 }
             });
         }

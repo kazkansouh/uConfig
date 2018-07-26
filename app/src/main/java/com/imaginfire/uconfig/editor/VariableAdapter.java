@@ -32,7 +32,7 @@ import com.imaginfire.uconfig.model.SchemaViewModel;
 import com.imaginfire.uconfig.model.Value;
 import com.imaginfire.uconfig.model.Variable;
 
-class VariableAdapter extends RecyclerView.Adapter<VariableViewHolder> {
+class VariableAdapter extends BaseAdapter<VariableViewHolder> {
     private static final String TAG = "VariableAdaptor";
     private static final String PARAM_EXPANDED = "com.imaginfire.uconfig.editor.VariableAdapter.EXPANDED";
 
@@ -69,41 +69,44 @@ class VariableAdapter extends RecyclerView.Adapter<VariableViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull VariableViewHolder holder, int position) {
         if (schema_model.getVariables().getValue() != null) {
-            holder.resetObservers();
             holder.clearState();
             Variable v = schema_model.getVariables().getValue().get(position);
             holder.setVariableName(v.getName());
-            v.getValue().observe(holder, value -> {
-                    holder.setLoading(false);
-                    if (value != null) {
-                        holder.setVariableValue(value.getStringValue());
-                    } else {
-                        holder.setVariableValue(null);
+            v.getValue().observe(holder, holder::setValue);
+            v.getBusy().observe(holder, holder::setLoading);
+            if (v.getValue().getValue() == null && v.isReadable()) {
+                v.startRead(() -> {
+                    synchronized (this) {
+                        if (recyclerView != null) {
+                            Snackbar.make(recyclerView, R.string.snack_read_fail, Snackbar.LENGTH_LONG).show();
+                        }
                     }
                 });
-            if (v.getValue().getValue() == null && v.isReadable()) {
-                holder.setLoading(true);
-                v.startRead();
-            } else {
-                holder.setLoading(false);
-                // v.getValue().getValue() != null added to pass code analysis, despite
-                // being implied by validity of v.isReadable()
-                if (v.getValue().getValue() != null && v.isReadable()) {
-                    holder.setVariableValue(v.getValue().getValue().getStringValue());
-                } else {
-                    holder.setVariableValue(null);
-                }
             }
             holder.setExpanded(position == expand);
             holder.setEditable(v.getType(), v.isWritable(), btn -> {
                 Value value = holder.getValue();
                 Log.d(TAG, "Setting to text: " + value);
-                if (v.startWrite(value)) {
+                if (!v.startWrite(value, () -> {
+                    // ok
                     notifyItemChanged(expand);
                     expand = -1;
-                    Snackbar.make(holder.itemView, R.string.snack_write_ok, Snackbar.LENGTH_LONG).show();
-                } else {
-                    Snackbar.make(holder.itemView, R.string.snack_write_fail, Snackbar.LENGTH_SHORT).show();
+                    synchronized (this) {
+                        if (recyclerView != null) {
+                            Snackbar.make(holder.itemView, R.string.snack_write_ok, Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                }, () -> {
+                    // fail
+                    synchronized (this) {
+                        if (recyclerView != null) {
+                            Snackbar.make(recyclerView, R.string.snack_write_fail, Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                })) {
+                    synchronized (this) {
+                        Snackbar.make(recyclerView, R.string.snack_write_invalid, Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

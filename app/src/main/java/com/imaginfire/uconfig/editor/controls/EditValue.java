@@ -85,4 +85,9 @@ public class EditValue extends AppCompatEditText {
     public Value getValue() {
         return value;
     }
+
+    public void setText(Value v) {
+        setType(v.type);
+        setText(v.getStringValue());
+    }
 }
